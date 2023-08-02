@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type TodoItemProps = {
   id: number;
@@ -10,11 +10,9 @@ type TodoItemProps = {
   onDelete?: () => void;
 };
 
-export default function Home() {  
+export default function Home() {
   const [newTodo, setNewTodo] = useState('');
-  const storedTodoList = localStorage.getItem('todoList');
-  const [TodoListItems, setTodoListItems] = useState<TodoItemProps[]>(JSON.parse(storedTodoList as string || ''));
-  
+  const [TodoListItems, setTodoListItems] = useState<TodoItemProps[]>([]);
   const onDeleteTodoItem = (id: number) => {
     const newTodoList = TodoListItems.filter(
       (item) => item.id !== id
@@ -39,6 +37,13 @@ export default function Home() {
     setTodoListItems(newTodoList);
     localStorage.setItem('todoList', JSON.stringify(newTodoList));
   }
+
+  useEffect(() => {
+    const storedTodoList = localStorage.getItem('todoList');
+    if (storedTodoList) {
+      setTodoListItems(JSON.parse(storedTodoList));
+    }
+  }, []);
 
   return (
     <main className='bg-[whitesmoke] min-h-screen py-20 px-2'>
